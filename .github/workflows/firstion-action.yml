@@ -1,21 +1,23 @@
-name: Deploy to Server
+name: Node CI
 
 on:
   push:
     branches: [main]
 
 jobs:
-  deploy:
+  node:
     runs-on: ubuntu-latest
 
     steps:
-      - name: SSH Deploy
-        uses: appleboy/ssh-action@v1.0.3
+      - uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            cd /app
-            git pull
-            docker-compose up -d --build
+          node-version: "18"
+
+      - name: Install
+        run: npm install
+
+      - name: Test
+        run: npm test

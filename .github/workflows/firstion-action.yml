@@ -1,10 +1,21 @@
-name: Manual Run
+name: Deploy to Server
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [main]
 
 jobs:
-  manual:
+  deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - run: echo "Triggered manually"
+      - name: SSH Deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /app
+            git pull
+            docker-compose up -d --build
